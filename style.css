@@ -5,6 +5,28 @@ body{
     overflow: hidden;
 }
 
+@keyframes zoomIn {
+    from{
+        height: inherit;
+        width: auto;
+    }
+    to{
+        height: 100px;
+        width: auto;
+    }
+}
+
+@keyframes zoomOut {
+    from{
+        height: 100px;
+        width: auto;
+    }
+    to{
+        height: inherit;
+        width: auto;
+    }
+}
+
 nav{
     height: 70px;
     width: 100vw;
@@ -59,6 +81,66 @@ section{
 }
 
 img{
+    cursor: pointer;
+}
+
+#instagram{
+    cursor: pointer;
+    animation: zoomOut forwards 0.5s;
+}
+
+#instagram > img{
+    height: inherit;
+}
+
+#instagram:hover{
+    animation: zoomIn forwards 0.5s;
+}
+
+
+#github{
     height: inherit;
     cursor: pointer;
+    animation: zoomOut forwards 0.5s;
+}
+
+#github > img{
+    height: inherit;
+}
+
+#github:hover{
+    animation: zoomIn forwards 0.5s;
+}
+
+#linkedin{
+    height: inherit;
+    cursor: pointer;
+    animation: zoomOut forwards 0.5s;
+}
+
+#linkedin > img{
+    height: inherit;
+}
+
+#linkedin:hover{
+    animation: zoomIn forwards 0.5s;
+}
+
+.buttonHolder{
+    margin-top: 20px;
+    display: flex;
+    gap: 20px;
+}
+
+.btn{
+    border-radius: 20px;
+    background-color: grey;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.btn > a{
+    color: black;
+    font-size: 1rem;
 }
