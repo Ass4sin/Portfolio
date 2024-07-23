@@ -12,6 +12,7 @@ nav{
     align-items: center;
     display: flex;
     color: white;
+    margin-bottom: 15px;
 }
 
 .navContainer{
@@ -33,4 +34,33 @@ a{
 #work{
     margin-right: 15px;
     font-size: 2rem;
+}
+
+main{
+    display: flex;
+    height: 100vh;
+    justify-content: space-around;
+}
+
+.work-square{
+    display: flex;
+    flex-flow: column;
+    gap: 15px;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    height: 500px;
+    width: 500px;
+    border: 1px solid white;
+    justify-content: space-around;
+    border-radius: 20px;
+}
+
+.project-title{
+    font-size: 1.3rem;
+    text-align: center;
+    font-weight: bold;
+}
+
+.project-link{
+    text-align: center;
 }
