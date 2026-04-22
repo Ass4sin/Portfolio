@@ -1,149 +1,1130 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio | Petre Tudor - Pentester</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Tudor Petre — Cybersécurité</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #080808;
+    --bg2: #0e0e0e;
+    --bg3: #141414;
+    --green: #00FF41;
+    --green-dim: #00cc33;
+    --green-glow: rgba(0,255,65,0.15);
+    --green-faint: rgba(0,255,65,0.06);
+    --text: #d4d4d4;
+    --text-dim: #666;
+    --text-muted: #444;
+    --border: #1e1e1e;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Space Grotesk', sans-serif;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--green-dim); border-radius: 2px; }
+
+  /* Scanline overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+    pointer-events: none;
+    z-index: 9999;
+  }
+  #root { min-height: 100vh; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(8,8,8,0.92);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    height: 56px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--green);
+    letter-spacing: 0.05em;
+  }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--green); }
+
+  /* SECTIONS */
+  section { padding: 100px 0 80px; }
+  .container { max-width: 1000px; margin: 0 auto; padding: 0 2rem; }
+
+  /* SECTION HEADER */
+  .sec-header {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--green);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+    display: flex; align-items: center; gap: 1rem;
+  }
+  .sec-header::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, var(--border), transparent);
+  }
+  .sec-title {
+    font-family: var(--sans);
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 3rem;
+    line-height: 1.2;
+  }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    display: flex; align-items: center;
+    position: relative;
+    overflow: hidden;
+    padding-top: 56px;
+  }
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    opacity: 0.4;
+    mask-image: radial-gradient(ellipse at 50% 50%, black 30%, transparent 80%);
+  }
+  .hero-glow {
+    position: absolute;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(0,255,65,0.08) 0%, transparent 70%);
+    top: 50%; left: 50%; transform: translate(-50%,-50%);
+    pointer-events: none;
+  }
+  .hero-content { position: relative; z-index: 1; }
+  .hero-prompt {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--green-dim);
+    margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .hero-name {
+    font-size: clamp(3rem, 7vw, 5.5rem);
+    font-weight: 700;
+    color: #fff;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+  }
+  .hero-name span { color: var(--green); }
+  .hero-role {
+    font-family: var(--mono);
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    color: var(--text-dim);
+    margin-bottom: 2rem;
+    min-height: 1.6em;
+  }
+  .cursor {
+    display: inline-block;
+    width: 2px; height: 1.1em;
+    background: var(--green);
+    margin-left: 2px;
+    vertical-align: text-bottom;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+  .hero-desc {
+    max-width: 520px;
+    color: var(--text-dim);
+    font-size: 1rem;
+    margin-bottom: 2.5rem;
+    line-height: 1.8;
+  }
+  .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-primary {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.75rem 1.75rem;
+    background: var(--green);
+    color: #000;
+    border: none; cursor: pointer;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  }
+  .btn-primary:hover { background: #fff; transform: translateY(-1px); }
+  .btn-secondary {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.75rem 1.75rem;
+    background: transparent;
+    color: var(--green);
+    border: 1px solid var(--green);
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover { background: var(--green-faint); }
+  .hero-stats {
+    position: absolute; right: 0; bottom: 15%;
+    display: flex; flex-direction: column; gap: 1.5rem;
+  }
+  .hero-stat {
+    text-align: right;
+    border-right: 2px solid var(--green);
+    padding-right: 1.25rem;
+  }
+  .hero-stat-num {
+    font-family: var(--mono);
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--green);
+    line-height: 1;
+  }
+  .hero-stat-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* TERMINAL BLOCK */
+  .terminal {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    font-family: var(--mono);
+    font-size: 0.85rem;
+  }
+  .terminal-bar {
+    background: var(--bg3);
+    padding: 0.6rem 1rem;
+    display: flex; align-items: center; gap: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .t-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .t-dot.r { background: #ff5f57; }
+  .t-dot.y { background: #febc2e; }
+  .t-dot.g { background: #28c840; }
+  .t-title { font-size: 0.7rem; color: var(--text-muted); margin-left: auto; margin-right: auto; }
+  .terminal-body { padding: 1.25rem 1.5rem; }
+  .t-line { display: flex; gap: 0.5rem; margin-bottom: 0.35rem; }
+  .t-prompt { color: var(--green); user-select: none; }
+  .t-cmd { color: #e2e8f0; }
+  .t-out { color: var(--text-dim); padding-left: 1rem; margin-bottom: 0.35rem; }
+  .t-key { color: #7dd3fc; }
+  .t-val { color: #86efac; }
+
+  /* SKILLS */
+  .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+  .skill-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    transition: border-color 0.3s, transform 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .skill-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(to right, var(--green), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .skill-card:hover { border-color: rgba(0,255,65,0.3); transform: translateY(-3px); }
+  .skill-card:hover::before { opacity: 1; }
+  .skill-card-icon {
+    font-family: var(--mono);
+    font-size: 1.4rem;
+    color: var(--green);
+    margin-bottom: 0.75rem;
+    line-height: 1;
+  }
+  .skill-card-title {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--green);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .skill-tag {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    padding: 0.25rem 0.6rem;
+    background: var(--green-faint);
+    border: 1px solid rgba(0,255,65,0.2);
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+  }
+  .skill-tag:hover { background: rgba(0,255,65,0.12); color: var(--green); }
+
+  /* EXPERIENCE */
+  .exp-list { display: flex; flex-direction: column; gap: 0; }
+  .exp-item {
+    display: grid; grid-template-columns: 160px 1fr;
+    gap: 0 2rem;
+    position: relative;
+    padding-bottom: 2.5rem;
+  }
+  .exp-item:last-child { padding-bottom: 0; }
+  .exp-item::before {
+    content: '';
+    position: absolute;
+    left: 160px; top: 8px; bottom: 0;
+    width: 1px;
+    background: var(--border);
+    margin-left: -1px;
+  }
+  .exp-item::after {
+    content: '';
+    position: absolute;
+    left: 160px; top: 8px;
+    width: 8px; height: 8px;
+    background: var(--green);
+    border-radius: 50%;
+    margin-left: -4px;
+    box-shadow: 0 0 8px var(--green);
+  }
+  .exp-date {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    padding-top: 0.1rem;
+    text-align: right;
+    padding-right: 2rem;
+  }
+  .exp-company {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--green-dim);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.35rem;
+  }
+  .exp-role {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+  }
+  .exp-bullets { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; }
+  .exp-bullets li {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    padding-left: 1.2rem;
+    position: relative;
+    line-height: 1.6;
+  }
+  .exp-bullets li::before {
+    content: '›';
+    position: absolute; left: 0;
+    color: var(--green);
+    font-family: var(--mono);
+  }
+
+  /* FORMATIONS */
+  .edu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+  .edu-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .edu-card:hover { border-color: rgba(0,255,65,0.3); transform: translateY(-3px); }
+  .edu-badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    padding: 0.2rem 0.6rem;
+    background: var(--green-faint);
+    border: 1px solid rgba(0,255,65,0.3);
+    color: var(--green);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .edu-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 0.35rem;
+    line-height: 1.4;
+  }
+  .edu-school {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+  }
+  .edu-date {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--green-dim);
+  }
+  .cert-badge {
+    position: absolute; top: 1rem; right: 1rem;
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    padding: 0.15rem 0.5rem;
+    background: rgba(254,188,46,0.1);
+    border: 1px solid rgba(254,188,46,0.3);
+    color: #febc2e;
+    letter-spacing: 0.1em;
+  }
+
+  /* PROJETS */
+  .proj-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+  .proj-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 1.75rem;
+    transition: border-color 0.3s, transform 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .proj-card:hover { border-color: rgba(0,255,65,0.3); transform: translateY(-3px); }
+  .proj-num {
+    font-family: var(--mono);
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--border);
+    line-height: 1;
+    margin-bottom: 1rem;
+    transition: color 0.3s;
+  }
+  .proj-card:hover .proj-num { color: rgba(0,255,65,0.15); }
+  .proj-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+  }
+  .proj-desc { font-size: 0.88rem; color: var(--text-dim); margin-bottom: 1.25rem; line-height: 1.7; }
+  .proj-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .proj-tag {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    padding: 0.2rem 0.5rem;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+
+  /* ABOUT */
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+  .about-text { font-size: 1rem; color: var(--text-dim); line-height: 1.9; }
+  .about-text p { margin-bottom: 1.25rem; }
+  .about-sidebar { display: flex; flex-direction: column; gap: 1.25rem; }
+  .about-item {
+    display: flex; align-items: flex-start; gap: 1rem;
+    padding: 1rem;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+  }
+  .about-item-icon {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--green);
+    min-width: 20px;
+    padding-top: 0.1rem;
+  }
+  .about-item-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.2rem;
+  }
+  .about-item-value { font-size: 0.9rem; color: var(--text); }
+
+  /* CONTACT */
+  #contact { background: var(--bg); }
+  .contact-wrapper {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start;
+  }
+  .contact-info { display: flex; flex-direction: column; gap: 1rem; }
+  .contact-link {
+    display: flex; align-items: center; gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    text-decoration: none;
+    transition: border-color 0.3s, transform 0.2s;
+    color: var(--text);
+  }
+  .contact-link:hover { border-color: rgba(0,255,65,0.4); transform: translateX(4px); }
+  .contact-link-icon {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--green);
+    min-width: 24px;
+  }
+  .contact-link-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.15rem;
+  }
+  .contact-link-val { font-size: 0.9rem; color: var(--text-dim); }
+  .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+  .form-field { display: flex; flex-direction: column; gap: 0.4rem; }
+  .form-field label {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .form-field input, .form-field textarea {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    padding: 0.75rem 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+    resize: vertical;
+  }
+  .form-field input:focus, .form-field textarea:focus { border-color: rgba(0,255,65,0.5); }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+  }
+  footer span { color: var(--green); }
+
+  /* TWEAKS PANEL */
+  .tweaks-panel {
+    position: fixed; bottom: 1.5rem; right: 1.5rem;
+    width: 280px;
+    background: var(--bg3);
+    border: 1px solid rgba(0,255,65,0.3);
+    padding: 1.25rem;
+    z-index: 9998;
+    font-family: var(--mono);
+    box-shadow: 0 0 30px rgba(0,255,65,0.1);
+    display: none;
+  }
+  .tweaks-panel.open { display: block; }
+  .tweaks-title {
+    font-size: 0.7rem;
+    color: var(--green);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.75rem;
+  }
+  .tweak-row { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; }
+  .tweak-label { font-size: 0.65rem; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; }
+  .tweak-btns { display: flex; gap: 0.5rem; }
+  .tweak-btn {
+    flex: 1;
+    padding: 0.4rem;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .tweak-btn.active { background: var(--green-faint); border-color: var(--green); color: var(--green); }
+  .tweak-btn:hover:not(.active) { border-color: var(--text-muted); color: var(--text); }
+  .tweak-color-row { display: flex; gap: 0.5rem; }
+  .tweak-color {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tweak-color.active { border-color: #fff; }
+
+  /* REVEAL ANIMATION */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) {
+    .about-grid, .contact-wrapper { grid-template-columns: 1fr; gap: 2rem; }
+    .hero-stats { display: none; }
+    .exp-item { grid-template-columns: 1fr; }
+    .exp-item::before, .exp-item::after { display: none; }
+    .exp-date { text-align: left; padding-right: 0; margin-bottom: 0.35rem; }
+    nav .nav-links { display: none; }
+  }
+</style>
 </head>
 <body>
+<div id="root"></div>
 
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "accentColor": "#00BFFF",
+  "density": "comfortable",
+  "scanlines": true
+}/*EDITMODE-END*/;
+
+// Typewriter hook
+function useTypewriter(strings, speed = 60, pause = 1800) {
+  const [display, setDisplay] = useState('');
+  const [idx, setIdx] = useState(0);
+  const [charIdx, setCharIdx] = useState(0);
+  const [deleting, setDeleting] = useState(false);
+
+  useEffect(() => {
+    const str = strings[idx % strings.length];
+    const timeout = setTimeout(() => {
+      if (!deleting) {
+        setDisplay(str.slice(0, charIdx + 1));
+        if (charIdx + 1 === str.length) {
+          setTimeout(() => setDeleting(true), pause);
+        } else {
+          setCharIdx(c => c + 1);
+        }
+      } else {
+        setDisplay(str.slice(0, charIdx - 1));
+        if (charIdx - 1 === 0) {
+          setDeleting(false);
+          setIdx(i => i + 1);
+          setCharIdx(0);
+        } else {
+          setCharIdx(c => c - 1);
+        }
+      }
+    }, deleting ? speed / 2 : speed);
+    return () => clearTimeout(timeout);
+  }, [display, deleting, charIdx, idx]);
+
+  return display;
+}
+
+// Intersection reveal
+function useReveal() {
+  useEffect(() => {
+    const els = document.querySelectorAll('.reveal');
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+    }, { threshold: 0.1 });
+    els.forEach(el => obs.observe(el));
+    return () => obs.disconnect();
+  });
+}
+
+function Nav() {
+  const links = [
+    ['#about', 'À propos'],
+    ['#skills', 'Compétences'],
+    ['#experience', 'Expériences'],
+    ['#education', 'Formations'],
+    ['#projects', 'Projets'],
+    ['#contact', 'Contact'],
+  ];
+  return (
     <nav>
-        <div class="logo">&lt;Tudor.Petre/&gt;</div>
-        <ul class="nav-links">
-            <li><a href="#accueil">Accueil</a></li>
-            <li><a href="#competences">Compétences</a></li>
-            <li><a href="#experience">Expériences</a></li>
-            <li><a href="#formation">Formation</a></li>
-            <li><a href="#contact">Contact</a></li>
-        </ul>
-        <div class="burger">
-            <i class="fas fa-bars"></i>
-        </div>
+      <div className="nav-logo">tp@cyber:~$</div>
+      <ul className="nav-links">
+        {links.map(([href, label]) => (
+          <li key={href}><a href={href}>{label}</a></li>
+        ))}
+      </ul>
     </nav>
+  );
+}
 
-    <section id="accueil" class="hero">
-        <div class="hero-content">
-            <p class="greeting">Bonjour, je suis</p>
-            <h1>Petre Tudor</h1>
-            <h2>Pentester & Administrateur Réseau</h2>
-            <p class="bio">
-                Étudiant passionné par la cybersécurité et l'infrastructure. 
-                En cours de validation des certifications Cisco (CCNA).
-            </p>
-            <div class="hero-btns">
-                <a href="#contact" class="btn primary-btn">Me contacter</a>
-                <a href="assets/petre_tudor_alternance.pdf" class="btn secondary-btn" target="_blank">Télécharger mon CV</a>
-            </div>
+function Hero() {
+  const roles = [
+    'Étudiant en Cybersécurité',
+    'Administrateur Réseaux & Systèmes',
+    'Futur Ingénieur LAN / WiFi',
+    'Passionné de Sécurité Offensive',
+  ];
+  const typed = useTypewriter(roles);
+
+  return (
+    <section id="hero">
+      <div className="hero-grid"/>
+      <div className="hero-glow"/>
+      <div className="container" style={{width:'100%'}}>
+        <div className="hero-content">
+          <div className="hero-prompt">
+            <span style={{color:'var(--green)'}}>▶</span>
+            <span>whoami</span>
+          </div>
+          <h1 className="hero-name">
+            Petre <span>Tudor</span>
+          </h1>
+          <div className="hero-role">
+            {typed}<span className="cursor"/>
+          </div>
+          <p className="hero-desc">
+            Étudiant passionné par la cybersécurité et les réseaux. Orienté vers la gestion et la protection des infrastructures, avec l'ambition de devenir administrateur systèmes et réseaux.
+          </p>
+          <div className="hero-btns">
+            <a href="#contact" className="btn-primary">Me contacter</a>
+            <a href="#experience" className="btn-secondary">Voir le parcours</a>
+          </div>
         </div>
-    </section>
-
-    <section id="competences">
-        <h2 class="section-title">Arsenal Technique</h2>
-        <div class="skills-container">
-            <div class="skill-card">
-                <i class="fas fa-shield-alt"></i>
-                <h3>Sécurité</h3>
-                <ul>
-                    <li>Firewall Management (Avancé)</li>
-                    <li>Tests d'intrusion (Avancé)</li>
-                    <li>Gestion des droits</li>
-                </ul>
-            </div>
-            <div class="skill-card">
-                <i class="fas fa-network-wired"></i>
-                <h3>Réseaux</h3>
-                <ul>
-                    <li>DNS, DHCP, VLAN, VPN</li>
-                    <li>Cisco ASA</li>
-                    <li>Infrastructure virtuelle</li>
-                </ul>
-            </div>
-            <div class="skill-card">
-                <i class="fas fa-server"></i>
-                <h3>Systèmes</h3>
-                <ul>
-                    <li>Linux (Expert)</li>
-                    <li>Windows Server / AD</li>
-                    <li>Docker (Intermédiaire)</li>
-                </ul>
-            </div>
+        <div className="hero-stats">
+          <div className="hero-stat">
+            <div className="hero-stat-num">3+</div>
+            <div className="hero-stat-label">Projets</div>
+          </div>
+          <div className="hero-stat">
+            <div className="hero-stat-num">2</div>
+            <div className="hero-stat-label">Certifications</div>
+          </div>
+          <div className="hero-stat">
+            <div className="hero-stat-num">B2</div>
+            <div className="hero-stat-label">Anglais</div>
+          </div>
         </div>
+      </div>
     </section>
+  );
+}
 
+function About() {
+  return (
+    <section id="about">
+      <div className="container">
+        <div className="sec-header reveal">// 01 — À PROPOS</div>
+        <h2 className="sec-title reveal">Mon profil</h2>
+        <div className="about-grid">
+          <div className="reveal">
+            <div className="terminal" style={{marginBottom:'1.5rem'}}>
+              <div className="terminal-bar">
+                <div className="t-dot r"/><div className="t-dot y"/><div className="t-dot g"/>
+                <div className="t-title">profile.json</div>
+              </div>
+              <div className="terminal-body">
+                <div className="t-line"><span className="t-prompt">$</span><span className="t-cmd">cat profile.json</span></div>
+                <div style={{marginTop:'0.5rem', lineHeight:'1.8'}}>
+                  <div><span className="t-key">"nom"</span>: <span className="t-val">"Petre Tudor"</span>,</div>
+                  <div><span className="t-key">"rôle"</span>: <span className="t-val">"Ingénieur Réseau LAN / WiFi"</span>,</div>
+                  <div><span className="t-key">"localisation"</span>: <span className="t-val">"Lille, France"</span>,</div>
+                  <div><span className="t-key">"langues"</span>: [<span className="t-val">"Français"</span>, <span className="t-val">"Anglais (B2)"</span>, <span className="t-val">"Allemand (B1)"</span>],</div>
+                  <div><span className="t-key">"disponible"</span>: <span style={{color:'#86efac'}}>true</span>,</div>
+                  <div><span className="t-key">"alternance"</span>: <span style={{color:'#86efac'}}>true</span></div>
+                </div>
+              </div>
+            </div>
+            <div className="about-text">
+              <p>Initié à l'informatique grâce à la spécialité NSI, j'ai rapidement orienté mon parcours vers la gestion et la protection des infrastructures réseaux.</p>
+              <p>Curieux et motivé, je poursuis actuellement un Bachelor Informatique spécialité Cybersécurité à Ynov Campus Lille, avec pour objectif de devenir administrateur systèmes et réseaux.</p>
+            </div>
+          </div>
+          <div className="about-sidebar reveal">
+            {[
+              ['>', 'Localisation', 'Lille, France'],
+              ['@', 'Email', 'tpetre151@gmail.com'],
+              ['#', 'Tel', '06 46 76 26 20'],
+              ['~', 'LinkedIn', 'linkedin.com/in/tudor-petre-9568b6301'],
+              ['♟', 'Handball', 'Ancien gardien — Cambrai'],
+              ['♬', 'Guitare', 'Autodidacte depuis 10 ans'],
+            ].map(([icon, label, val]) => (
+              <div className="about-item" key={label}>
+                <div className="about-item-icon">{icon}</div>
+                <div>
+                  <div className="about-item-label">{label}</div>
+                  <div className="about-item-value">{val}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Skills() {
+  const categories = [
+    {
+      icon: '⬡',
+      title: 'Réseau',
+      tags: ['VLAN','OSPF','Routage statique/dynamique','Routage inter-VLAN','IPv4/IPv6','Architecture LAN/WiFi','Switching'],
+    },
+    {
+      icon: '⚿',
+      title: 'Sécurité & Services',
+      tags: ['DNS','DHCP','NAT/PAT','Pare-feu Cisco ASA','VPN IPsec/SSL','ACLs'],
+    },
+    {
+      icon: '◉',
+      title: 'Systèmes & Conteneurs',
+      tags: ['Linux (Debian)','Windows Server','Active Directory','Docker','Bash','PowerShell'],
+    },
+    {
+      icon: '⌥',
+      title: 'Outils & Supervision',
+      tags: ['Cisco Packet Tracer','Wireshark','GNS3','AWS EC2/VPC','OpenVPN','WireGuard'],
+    },
+  ];
+  return (
+    <section id="skills" style={{background:'var(--bg2)'}}>
+      <div className="container">
+        <div className="sec-header reveal">// 02 — COMPÉTENCES</div>
+        <h2 className="sec-title reveal">Stack technique</h2>
+        <div className="skills-grid">
+          {categories.map(c => (
+            <div className="skill-card reveal" key={c.title}>
+              <div className="skill-card-icon">{c.icon}</div>
+              <div className="skill-card-title">{c.title}</div>
+              <div className="skill-tags">
+                {c.tags.map(t => <span className="skill-tag" key={t}>{t}</span>)}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Experience() {
+  const exps = [
+    {
+      date: '11.2024',
+      company: 'Ynov Campus, Lille',
+      role: 'Conception & Sécurisation d\'une Infrastructure Cloud',
+      bullets: [
+        'Architecture et déploiement d\'une infrastructure virtualisée sur AWS (EC2, VPC, Security Groups)',
+        'Sécurisation des accès distants via serveurs VPN (OpenVPN, WireGuard) : réduction de la surface d\'attaque',
+        'Administration d\'un annuaire Active Directory : gestion des comptes, GPO et contrôle des droits d\'accès',
+      ],
+    },
+    {
+      date: '11.2024 – 12.2024',
+      company: 'Ynov Campus, Lille',
+      role: 'Administration Système & Réseau en Environnement Virtualisé',
+      bullets: [
+        'Administration de serveurs Windows Server et Linux (Debian) : DNS, DHCP, pare-feu, gestion des services',
+        'Conception d\'une architecture réseau multi-VLAN avec routage dynamique (OSPF) et statique',
+        'Automatisation de tâches via scripts Bash et PowerShell ; conteneurisation Docker',
+      ],
+    },
+    {
+      date: '11.2024',
+      company: 'InfoVeto (startup), Lille',
+      role: 'Administrateur Système & Réseau — Support N1/N2',
+      bullets: [
+        'Maintenance et suivi de l\'infrastructure système et réseau (serveurs, postes, équipements actifs)',
+        'Support technique N1/N2 : diagnostic, résolution d\'incidents et accompagnement des utilisateurs',
+        'Participation à l\'amélioration continue de la sécurité et de la disponibilité du SI',
+      ],
+    },
+  ];
+  return (
     <section id="experience">
-        <h2 class="section-title">Missions & CTF</h2>
-        <div class="timeline">
-            <div class="timeline-item">
-                <div class="timeline-content">
-                    <span class="date">Nov. 2024 - Présent</span>
-                    <h3>Administrateur Réseau</h3>
-                    <h4>InfoVeto, Lille</h4>
-                    <p>Gestion et maintenance du réseau interne, configuration de serveurs et support technique.</p>
-                </div>
-            </div>
-            <div class="timeline-item">
-                <div class="timeline-content">
-                    <span class="date">Nov. 2024</span>
-                    <h3>Participant Hackvens</h3>
-                    <h4>CTF organisé par aDvens</h4>
-                    <p>Challenge de cybersécurité (Capture The Flag).</p>
-                </div>
-            </div>
-            <div class="timeline-item">
-                <div class="timeline-content">
-                    <span class="date">Nov - Déc 2024</span>
-                    <h3>Infrastructure Réseau</h3>
-                    <h4>Lille Ynov Campus</h4>
-                    <p>Configuration complète DNS, DHCP et pare-feu pour un réseau privé virtualisé.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="formation">
-        <h2 class="section-title">Parcours & Certifications</h2>
-        <div class="formation-grid">
-            <div class="card">
-                <h3>Bachelor Informatique / Mastère Cybersécurité</h3>
-                <p><strong>Ynov Campus Lille</strong> (2023 - 2028)</p>
-                <p class="small-text">Spécialisation Cybersécurité</p>
-            </div>
-            
-            <div class="card">
-                <h3>Certifications Cisco (CCNA)</h3>
-                <p>En cours de validation :</p>
-                <ul class="cert-list">
-                    <!-- <li><i class="fas fa-check-circle" style="color:var(--accent)"></i> ITN (Introduction to Networks)</li> -->
-                    <li><i class="fas fa-spinner fa-spin" style="color:var(--accent)"></i> ITN (Introduction to Networks)</li>
-                    <li><i class="fas fa-spinner fa-spin" style="color:var(--text-color)"></i> SRWE (Switching, Routing, and Wireless Essentials)</li>
-                    <li><i class="fas fa-spinner fa-spin" style="color:var(--text-color)"></i> ENSA (Enterprise Networking, Security, and Automation)</li>
+      <div className="container">
+        <div className="sec-header reveal">// 03 — EXPÉRIENCES</div>
+        <h2 className="sec-title reveal">Parcours professionnel</h2>
+        <div className="exp-list">
+          {exps.map((e, i) => (
+            <div className="exp-item reveal" key={i}>
+              <div className="exp-date">{e.date}</div>
+              <div>
+                <div className="exp-company">{e.company}</div>
+                <div className="exp-role">{e.role}</div>
+                <ul className="exp-bullets">
+                  {e.bullets.map((b, j) => <li key={j}>{b}</li>)}
                 </ul>
+              </div>
             </div>
-
-            <div class="card">
-                <h3>Certification PJPT</h3>
-                <p>En préparation (Objectif Oct. 2026)</p>
-            </div>
+          ))}
         </div>
+      </div>
     </section>
+  );
+}
 
+function Education() {
+  const items = [
+    {
+      badge: 'Formation',
+      name: 'Bachelor Informatique — Cybersécurité / Mastère Expert Cybersécurité',
+      school: 'Ynov Campus Lille',
+      date: 'Sept. 2023 → Juill. 2028',
+      cert: null,
+    },
+    {
+      badge: 'Certification',
+      name: 'CCNA (Cisco Certified Network Associate)',
+      school: 'Ynov Campus',
+      date: 'Depuis Janvier 2026',
+      cert: 'EN COURS',
+    },
+    {
+      badge: 'Certification',
+      name: 'PJPT (Practical Junior Penetration Tester)',
+      school: 'Ynov — Auto-formation',
+      date: 'Depuis Janvier 2026',
+      cert: 'EN COURS',
+    },
+  ];
+  return (
+    <section id="education" style={{background:'var(--bg2)'}}>
+      <div className="container">
+        <div className="sec-header reveal">// 04 — FORMATIONS</div>
+        <h2 className="sec-title reveal">Certifications & Diplômes</h2>
+        <div className="edu-grid">
+          {items.map((item, i) => (
+            <div className="edu-card reveal" key={i}>
+              {item.cert && <div className="cert-badge">{item.cert}</div>}
+              <div className="edu-badge">{item.badge}</div>
+              <div className="edu-name">{item.name}</div>
+              <div className="edu-school">{item.school}</div>
+              <div className="edu-date">{item.date}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Projects() {
+  const projects = [
+    {
+      title: 'Infrastructure Cloud Sécurisée',
+      desc: 'Déploiement d\'une infrastructure virtualisée sur AWS avec VPN, Active Directory et politique de sécurité renforcée (Security Groups, GPO).',
+      tags: ['AWS EC2', 'VPC', 'OpenVPN', 'WireGuard', 'Active Directory'],
+    },
+    {
+      title: 'Architecture Réseau Multi-VLAN',
+      desc: 'Conception d\'un réseau multi-VLAN avec routage OSPF dynamique et statique, simulation sur Cisco Packet Tracer et GNS3.',
+      tags: ['VLAN', 'OSPF', 'GNS3', 'Packet Tracer', 'Routage'],
+    },
+    {
+      title: 'Administration Système Hybride',
+      desc: 'Mise en place d\'un environnement Windows Server / Linux avec DNS, DHCP, pare-feu, et automatisation par scripts Bash & PowerShell + Docker.',
+      tags: ['Windows Server', 'Linux', 'Docker', 'Bash', 'PowerShell'],
+    },
+  ];
+  return (
+    <section id="projects">
+      <div className="container">
+        <div className="sec-header reveal">// 05 — PROJETS</div>
+        <h2 className="sec-title reveal">Réalisations</h2>
+        <div className="proj-grid">
+          {projects.map((p, i) => (
+            <div className="proj-card reveal" key={i}>
+              <div className="proj-num">0{i+1}</div>
+              <div className="proj-title">{p.title}</div>
+              <div className="proj-desc">{p.desc}</div>
+              <div className="proj-tags">{p.tags.map(t => <span className="proj-tag" key={t}>{t}</span>)}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Contact() {
+  const [sent, setSent] = useState(false);
+  return (
     <section id="contact">
-        <h2>Restons en contact</h2>
-        <p>Ouvert aux opportunités sur Lille.</p>
-        <div class="contact-links">
-            <a href="mailto:tpetre151@gmail.com" class="btn"><i class="fas fa-envelope"></i> Email</a>
-            <a href="https://linkedin.com/in/tudor-petre-9568b6301" target="_blank" class="btn"><i class="fab fa-linkedin"></i> LinkedIn</a>
-            <a href="tel:+33646762620" class="btn"><i class="fas fa-phone"></i> 06 46 76 26 20</a>
+      <div className="container">
+        <div className="sec-header reveal">// 06 — CONTACT</div>
+        <h2 className="sec-title reveal">Travaillons ensemble</h2>
+        <div className="contact-wrapper">
+          <div className="contact-info reveal">
+            <p style={{color:'var(--text-dim)', marginBottom:'1.5rem', fontSize:'0.95rem', lineHeight:'1.8'}}>
+              Disponible pour une alternance en tant qu'Ingénieur Réseau LAN/WiFi. N'hésitez pas à me contacter.
+            </p>
+            {[
+              {icon:'@', label:'Email', val:'tpetre151@gmail.com', href:'mailto:tpetre151@gmail.com'},
+              {icon:'↗', label:'LinkedIn', val:'linkedin.com/in/tudor-petre-9568b6301', href:'https://linkedin.com/in/tudor-petre-9568b6301'},
+              {icon:'#', label:'Téléphone', val:'06 46 76 26 20', href:'tel:0646762620'},
+              {icon:'⌖', label:'Localisation', val:'Lille, France', href:null},
+            ].map(({icon, label, val, href}) => (
+              <a className="contact-link" key={label} href={href || '#'} target={href?.startsWith('http') ? '_blank' : undefined} rel="noreferrer">
+                <div className="contact-link-icon">{icon}</div>
+                <div>
+                  <div className="contact-link-label">{label}</div>
+                  <div className="contact-link-val">{val}</div>
+                </div>
+              </a>
+            ))}
+          </div>
+          <div className="reveal">
+            {sent ? (
+              <div className="terminal">
+                <div className="terminal-bar"><div className="t-dot r"/><div className="t-dot y"/><div className="t-dot g"/><div className="t-title">message.sh</div></div>
+                <div className="terminal-body">
+                  <div className="t-line"><span className="t-prompt">$</span><span className="t-cmd">send_message.sh</span></div>
+                  <div className="t-out" style={{color:'var(--green)', marginTop:'0.5rem'}}>✓ Message envoyé avec succès.</div>
+                  <div className="t-out">Je vous répondrai dans les plus brefs délais.</div>
+                </div>
+              </div>
+            ) : (
+              <div className="contact-form">
+                <div className="form-field"><label>Nom</label><input type="text" placeholder="Votre nom"/></div>
+                <div className="form-field"><label>Email</label><input type="email" placeholder="votre@email.com"/></div>
+                <div className="form-field"><label>Message</label><textarea rows="5" placeholder="Votre message..."/></div>
+                <button className="btn-primary" style={{alignSelf:'flex-start'}} onClick={() => setSent(true)}>Envoyer le message</button>
+              </div>
+            )}
+          </div>
         </div>
+      </div>
     </section>
+  );
+}
 
-    <footer>
-        <p>&copy; 2026 Petre Tudor. Autodidacte & Passionné.</p>
-        <p style="font-size: 0.8rem; opacity: 0.7;">Intérêts : Handball, Guitare, Veille Techno</p>
-    </footer>
+function TweaksPanel({ open, tweaks, onChange }) {
+  const colors = ['#00FF41','#00BFFF','#FF4500','#A855F7','#FFD700'];
+  return (
+    <div className={`tweaks-panel ${open ? 'open' : ''}`}>
+      <div className="tweaks-title">⚙ Tweaks</div>
+      <div className="tweak-row">
+        <div className="tweak-label">Couleur d'accent</div>
+        <div className="tweak-color-row">
+          {colors.map(c => (
+            <div key={c} className={`tweak-color ${tweaks.accentColor === c ? 'active' : ''}`}
+              style={{background: c}}
+              onClick={() => onChange('accentColor', c)}/>
+          ))}
+        </div>
+      </div>
+      <div className="tweak-row">
+        <div className="tweak-label">Densité</div>
+        <div className="tweak-btns">
+          {['compact','comfortable','spacious'].map(d => (
+            <div key={d} className={`tweak-btn ${tweaks.density === d ? 'active' : ''}`}
+              onClick={() => onChange('density', d)}>{d}</div>
+          ))}
+        </div>
+      </div>
+      <div className="tweak-row">
+        <div className="tweak-label">Scanlines</div>
+        <div className="tweak-btns">
+          <div className={`tweak-btn ${tweaks.scanlines ? 'active' : ''}`} onClick={() => onChange('scanlines', true)}>ON</div>
+          <div className={`tweak-btn ${!tweaks.scanlines ? 'active' : ''}`} onClick={() => onChange('scanlines', false)}>OFF</div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-    <script src="script.js"></script>
+function App() {
+  const [tweaks, setTweaks] = useState(TWEAK_DEFAULTS);
+  const [tweaksOpen, setTweaksOpen] = useState(false);
+  useReveal();
+
+  const handleTweak = (key, val) => {
+    const next = { ...tweaks, [key]: val };
+    setTweaks(next);
+    const root = document.documentElement;
+    if (key === 'accentColor') {
+      root.style.setProperty('--green', val);
+      root.style.setProperty('--green-dim', val + 'cc');
+      root.style.setProperty('--green-glow', val + '26');
+      root.style.setProperty('--green-faint', val + '10');
+    }
+    if (key === 'density') {
+      const pad = val === 'compact' ? '60px' : val === 'spacious' ? '140px' : '100px';
+      document.querySelectorAll('section').forEach(s => { s.style.paddingTop = pad; s.style.paddingBottom = (parseInt(pad)*0.8)+'px'; });
+    }
+    if (key === 'scanlines') {
+      document.body.style.setProperty('--scanline-opacity', val ? '1' : '0');
+      document.body.style.setProperty('display', val ? '' : '');
+    }
+    window.parent.postMessage({ type: '__edit_mode_set_keys', edits: next }, '*');
+  };
+
+  useEffect(() => {
+    window.addEventListener('message', e => {
+      if (e.data?.type === '__activate_edit_mode') setTweaksOpen(true);
+      if (e.data?.type === '__deactivate_edit_mode') setTweaksOpen(false);
+    });
+    window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+  }, []);
+
+  return (
+    <>
+      <Nav/>
+      <Hero/>
+      <About/>
+      <Skills/>
+      <Experience/>
+      <Education/>
+      <Projects/>
+      <Contact/>
+      <footer>
+        <span>tudor@cyber:~$</span>
+        <span>© 2026 Petre Tudor — Tous droits réservés</span>
+        <span style={{color:'var(--text-muted)'}}>Lille, France</span>
+      </footer>
+      <TweaksPanel open={tweaksOpen} tweaks={tweaks} onChange={handleTweak}/>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
 </body>
 </html>
